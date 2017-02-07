@@ -24,6 +24,7 @@ using namespace std;
 #include "glm/ext.hpp"
 #include <algorithm>
 
+#include "Vector_library.h"
 #include "Graphics.h"
 #include "Shapes.h"
 #include "Physics_ball.h"
@@ -39,13 +40,14 @@ void remove_dead();
 // VARIABLES
 bool		running = true;
 Graphics	myGraphics;		// Runing all the graphics in this object
-//Sphere		mySphere;
 Cube		myCube;
 int const no_of_balls = 100;
 
+// Where all the balls are stored
 std::vector<Sphere>		mySpheres;
 std::vector<Physics_ball> balls;
 
+// The main is the only one which can be exploded.
 Sphere main_sphere;
 Physics_ball main_ball;
 
@@ -56,7 +58,6 @@ int main()
 
 	int errorGraphics = myGraphics.Init();		// Launch window and graphics context
 	if (errorGraphics) return 0;				// Close if something went wrong...
-
 	startup();									// Setup all necessary information for startup (aka. load texture, shaders, models, etc).
 												// Mixed graphics and update functions - declared in main for simplicity.
 	glfwSetWindowSizeCallback(myGraphics.window, onResizeCallback);			// Set callback for resize
@@ -76,9 +77,8 @@ int main()
 
 		update(currentTime);					// update (physics, animation, structures, etc)
 		int i = 0;
-
 		for (auto it = balls.begin(); it != balls.end(); it++,i++)	// Move every ball
-		//for (Physics_ball n : balls)
+	//	for (Physics_ball n : balls)
 		{
 			balls.at(i).move_ball(time_diff);
 			//n.move_ball(time_diff);
