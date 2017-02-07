@@ -112,6 +112,8 @@ void explode() {
 		new_ball.acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 		balls.push_back(new_ball);
 	}
+	// Kill main ball
+	main_ball.lifetime = 0;
 
 	// Load Geometry
 	for (int i = 0; i < no_of_balls; i++)
@@ -122,7 +124,23 @@ void explode() {
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
 		mySpheres.push_back(new_sphere);
 	}
+}
 
+void genrate_ball() {
+
+	balls.push_back(main_ball);
+
+	srand(static_cast <unsigned> (time(0)));
+		Physics_ball new_ball;
+		new_ball.lifetime = rand() % 200 + 300;
+		new_ball.radius = 1.0f;
+	//	balls.push_back(new_ball);
+		main_ball = new_ball;
+
+		Sphere new_sphere;
+		new_sphere.Load();
+		new_sphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		mySpheres.push_back(new_sphere);
 }
 
 // Removes physics ball and graphics ball for dead balls.
@@ -208,8 +226,9 @@ void render(double currentTime) {
 	{
 			mySphere.Draw();
 	}
+	if (main_ball.is_alive()){
 		main_sphere.Draw();
-
+	}
 
 		//myCube.Draw();
 }
@@ -225,9 +244,10 @@ void onResizeCallback(GLFWwindow* window, int w, int h) {	// call everytime the 
 void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) { // called everytime a key is pressed
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
 		explode();
-	}
+	if (key == GLFW_KEY_G && action == GLFW_PRESS)
+		genrate_ball();
 
 	//if (key == GLFW_KEY_LEFT) angleY += 0.05f;
 }

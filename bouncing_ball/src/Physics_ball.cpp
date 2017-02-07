@@ -11,7 +11,7 @@ Physics_ball::Physics_ball() {
 	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	friction = glm::vec3(0.9f, 1.0f, 0.9f);
-	lifetime = 500;
+	lifetime = 5000;
 	radius = 1;
 };
 Physics_ball::~Physics_ball() {};
