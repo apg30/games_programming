@@ -10,6 +10,8 @@
 //
 // Note: Do not forget to link the libraries correctly and add the GLEW DLL in your debug/release folder.
 
+#define TRANSPARENCY_RATE 0.008
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -39,7 +41,7 @@ bool		running = true;
 Graphics	myGraphics;		// Runing all the graphics in this object
 //Sphere		mySphere;
 Cube		myCube;
-int const no_of_balls = 20;
+int const no_of_balls = 100;
 
 std::vector<Sphere>		mySpheres;
 std::vector<Physics_ball> balls;
@@ -59,6 +61,9 @@ int main()
 												// Mixed graphics and update functions - declared in main for simplicity.
 	glfwSetWindowSizeCallback(myGraphics.window, onResizeCallback);			// Set callback for resize
 	glfwSetKeyCallback(myGraphics.window, onKeyCallback);					// Set Callback for keys
+
+  glEnable( GL_BLEND );
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	double currentTime = glfwGetTime();
 
@@ -106,9 +111,9 @@ void explode() {
 	{
 		Physics_ball new_ball;
 		new_ball.lifetime = rand() % 200 + 300;
-		new_ball.radius = 0.2f;
-		new_ball.position = main_ball.position; //glm::vec3(-3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))), -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))), -6.0f);
-		new_ball.velocity = glm::vec3(-3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))), -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))), -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))));
+		new_ball.radius = 0.02f;
+		new_ball.position = main_ball.position;
+		new_ball.velocity = glm::vec3(-7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (12))), -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (16))), -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (12))));
 		new_ball.acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 		balls.push_back(new_ball);
 	}
@@ -156,12 +161,20 @@ void remove_dead() {
 		}
 		else
 		{
+			float alpha = balls.at(i).lifetime * TRANSPARENCY_RATE;
+			mySpheres.at(i).fillColor = glm::vec4(0.0f, 1.0f, 0.0f, alpha);
 			it++;
 			i++;
 		}
 	}
 	balls.shrink_to_fit();
 	mySpheres.shrink_to_fit();
+
+	if(main_ball.is_alive())
+	{
+		float alpha = main_ball.lifetime * TRANSPARENCY_RATE;
+		main_sphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, alpha);
+	}
 }
 
 void startup() {
