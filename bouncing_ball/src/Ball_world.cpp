@@ -28,6 +28,8 @@ using namespace std;
 #include "Graphics.h"
 #include "Shapes.h"
 #include "Physics_ball.h"
+#include "Ball_control.h"
+
 
 // FUNCTIONS
 void render(double currentTime);
@@ -35,8 +37,6 @@ void update(double currentTime);
 void startup();
 void onResizeCallback(GLFWwindow* window, int w, int h);
 void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void explode();
-void generate_ball();
 void remove_dead();
 
 // VARIABLES
@@ -47,11 +47,11 @@ int const no_of_balls = 100;
 
 // Where all the balls are stored
 std::vector<Sphere>		mySpheres;
-std::vector<Physics_ball> balls;
 
+
+Ball_control control;
 // The main is the only one which can be exploded.
 Sphere main_sphere;
-Physics_ball main_ball;
 
 float t = 0.001f;			// Global variable for animation
 
@@ -78,14 +78,10 @@ int main()
 		glfwPollEvents();						// poll callbacks
 
 		update(currentTime);					// update (physics, animation, structures, etc)
-		int i = 0;
-		for (auto it = balls.begin(); it != balls.end(); it++,i++)	// Move every ball
-	//	for (Physics_ball n : balls)
-		{
-			balls.at(i).move_ball(time_diff);
-			//n.move_ball(time_diff);
-		}
-		main_ball.move_ball(time_diff);
+
+		control.move_balls(time_diff);
+
+
 		remove_dead();							// remove dead balls
 		render(currentTime);					// call render function.
 
@@ -104,54 +100,12 @@ int main()
 	return 0;
 }
 
-// Create new balls with random attributes.
-// Create new spheres with random attributes
-void explode() {
-	srand(static_cast <unsigned> (time(0)));
-	for (int i = 0; i < no_of_balls; i++)
-	{
-		Physics_ball new_ball;
-		new_ball.lifetime = rand() % 200 + 300;
-		new_ball.radius = 0.02f;
-		new_ball.position = main_ball.position;
-		new_ball.velocity = glm::vec3(-7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (12))), -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (16))), -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (12))));
-		new_ball.acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
-		balls.push_back(new_ball);
-	}
-	// Kill main ball - set to 5 for small delay.
-	main_ball.lifetime = 5;
-
-	// Load Geometry
-	for (int i = 0; i < no_of_balls; i++)
-	{
-		Sphere new_sphere;
-		new_sphere.Load();
-		new_sphere.fillColor = glm::vec4(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
-			static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
-		mySpheres.push_back(new_sphere);
-	}
-}
-
-void generate_ball() {
-
-	balls.push_back(main_ball);
-
-	srand(static_cast <unsigned> (time(0)));
-		Physics_ball new_ball;
-		new_ball.lifetime = rand() % 200 + 300;
-		new_ball.radius = 1.0f;
-	//	balls.push_back(new_ball);
-		main_ball = new_ball;
-
-		Sphere new_sphere;
-		new_sphere.Load();
-		new_sphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-		mySpheres.push_back(new_sphere);
-}
 
 // Removes physics ball and graphics ball for dead balls.
 // Must be done this way to avoid manipulating the iterator whilst iterating.
 void remove_dead() {
+
+	auto balls = control.balls;
 	int i = 0;
 	for (auto it = balls.cbegin(); it != balls.cend(); )
 	{
@@ -171,9 +125,9 @@ void remove_dead() {
 	balls.shrink_to_fit();
 	mySpheres.shrink_to_fit();
 
-	if(main_ball.is_alive())
+	if(control.main_ball.is_alive())
 	{
-		float alpha = main_ball.lifetime * TRANSPARENCY_RATE;
+		float alpha = control.main_ball.lifetime * TRANSPARENCY_RATE;
 		main_sphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, alpha);
 	}
 }
@@ -191,8 +145,20 @@ void startup() {
 	myGraphics.SetOptimisations();		// Cull and depth testing
 }
 
+void load_geometry(glm::vec4 colour = glm::vec4(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX))){
+// Load Geometry
+	for (int i = 0; i < no_of_balls; i++)
+	{
+		Sphere new_sphere;
+		new_sphere.Load();
+		new_sphere.fillColor = colour;
+		mySpheres.push_back(new_sphere);
+	}
+}
+
 void update(double currentTime) {
 
+	auto balls = control.balls;
 	//http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 	glm::mat4 mv_matrix_cube =
 		glm::translate(glm::vec3(0.0f, -2.0f, -6.0f)) *
@@ -217,7 +183,7 @@ void update(double currentTime) {
 	}
 
 	// calculate  main sphere's movement
-	glm::mat4 main_mv_matrix_sphere =	glm::translate(main_ball.position) *
+	glm::mat4 main_mv_matrix_sphere =	glm::translate(control.main_ball.position) *
 										//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
 										//glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
 										glm::mat4(1.0f);
@@ -236,7 +202,7 @@ void render(double currentTime) {
 	{
 			mySphere.Draw();
 	}
-	if (main_ball.is_alive()){
+	if (control.main_ball.is_alive()){
 		main_sphere.Draw();
 	}
 
@@ -255,9 +221,14 @@ void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mo
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	if (key == GLFW_KEY_E && action == GLFW_PRESS)
-		explode();
+	{
+		control.explode();
+		load_geometry();
+	}
 	if (key == GLFW_KEY_G && action == GLFW_PRESS)
-		generate_ball();
-
+	{
+		control.generate_ball();
+		load_geometry(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	}
 	//if (key == GLFW_KEY_LEFT) angleY += 0.05f;
 }
