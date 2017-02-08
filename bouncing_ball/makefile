@@ -4,4 +4,4 @@ LFLAGS=-lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -l
 
 GLEW_LIB=-Wl,-rpath,/usr/lib64
 all:
-	g++ -Wall $(GLEW_LIB) $(SRC_DIR) $(LFLAGS) -o bouncing_ball.bin -std=c++11 -L /usr/lib/ -L . -I include -I ../vector_library/include -g
+	g++ -Wall $(GLEW_LIB) $(SRC_DIR) $(LFLAGS) -o bin/bouncing_ball.bin -std=c++11 -L /usr/lib/ -L . -I include -I ../vector_library/include -g

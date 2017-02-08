@@ -35,6 +35,8 @@ void update(double currentTime);
 void startup();
 void onResizeCallback(GLFWwindow* window, int w, int h);
 void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void explode();
+void generate_ball();
 void remove_dead();
 
 // VARIABLES
@@ -84,9 +86,8 @@ int main()
 			//n.move_ball(time_diff);
 		}
 		main_ball.move_ball(time_diff);
-
-		render(currentTime);					// call render function.
 		remove_dead();							// remove dead balls
+		render(currentTime);					// call render function.
 
 		glfwSwapBuffers(myGraphics.window);		// swap buffers (avoid flickering and tearing)
 
@@ -117,8 +118,8 @@ void explode() {
 		new_ball.acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 		balls.push_back(new_ball);
 	}
-	// Kill main ball
-	main_ball.lifetime = 0;
+	// Kill main ball - set to 5 for small delay.
+	main_ball.lifetime = 5;
 
 	// Load Geometry
 	for (int i = 0; i < no_of_balls; i++)
@@ -131,7 +132,7 @@ void explode() {
 	}
 }
 
-void genrate_ball() {
+void generate_ball() {
 
 	balls.push_back(main_ball);
 
@@ -202,17 +203,14 @@ void update(double currentTime) {
 	// calculate Spheres' movement
 	glm::mat4 mv_matrix_spheres;
 
-	//for (int i = 0; i < balls.size() ; i++)
 	int i=0;
 	for (Physics_ball n : balls)
 	{
 		mv_matrix_spheres = glm::translate(n.position) *
 								//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
 								//glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
-
 								glm::mat4(1.0f) *
 								glm::scale(glm::vec3(n.radius, n.radius, n.radius));
-		//std::cout << glm::to_string(position) << std::endl;
 			mySpheres.at(i).mv_matrix = mv_matrix_spheres;
 			mySpheres.at(i).proj_matrix = myGraphics.proj_matrix;
 			i++;
@@ -223,7 +221,6 @@ void update(double currentTime) {
 										//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
 										//glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
 										glm::mat4(1.0f);
-	//std::cout << glm::to_string(position) << std::endl;
 	main_sphere.mv_matrix = main_mv_matrix_sphere;
 	main_sphere.proj_matrix = myGraphics.proj_matrix;
 
@@ -260,7 +257,7 @@ void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mo
 	if (key == GLFW_KEY_E && action == GLFW_PRESS)
 		explode();
 	if (key == GLFW_KEY_G && action == GLFW_PRESS)
-		genrate_ball();
+		generate_ball();
 
 	//if (key == GLFW_KEY_LEFT) angleY += 0.05f;
 }
