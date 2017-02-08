@@ -50,3 +50,23 @@ void Ball_control::generate_ball() {
 	//	balls.push_back(new_ball);
 		main_ball = new_ball;
 }
+
+// Removes physics ball and graphics ball for dead balls.
+// Must be done this way to avoid manipulating the iterator whilst iterating.
+void Ball_control::remove_dead() {
+
+	int i = 0;
+	for (auto it = balls.cbegin(); it != balls.cend(); )
+	{
+		if (!balls.at(i).is_alive())
+		{
+			it = balls.erase(balls.begin() + i);
+		}
+		else
+		{
+			it++;
+			i++;
+		}
+	}
+	balls.shrink_to_fit();
+}

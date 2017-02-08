@@ -68,7 +68,7 @@ int main()
 
 	double currentTime = glfwGetTime();
 
-	do {													// MAIN LOOP run until the window is closed
+	do {													// MAIN LOOremove_dead_graphics()P run until the window is closed
 		double prev_time = currentTime;
 		currentTime = glfwGetTime();		// retrieve timelapse
 		double time_diff = currentTime - prev_time;
@@ -79,7 +79,8 @@ int main()
 
 		control.move_balls(time_diff);
 
-		remove_dead();							// remove dead balls
+		remove_dead(); 	// remove dead balls
+
 		render(currentTime);					// call render function.
 
 		glfwSwapBuffers(myGraphics.window);		// swap buffers (avoid flickering and tearing)
@@ -97,11 +98,39 @@ int main()
 	return 0;
 }
 
+void startup() {
 
-// Removes physics ball and graphics ball for dead balls.
-// Must be done this way to avoid manipulating the iterator whilst iterating.
+	// Calculate proj_matrix for the first time.
+	myGraphics.aspect = (float)myGraphics.windowWidth / (float)myGraphics.windowHeight;
+	myGraphics.proj_matrix = glm::perspective(glm::radians(50.0f), myGraphics.aspect, 0.1f, 1000.0f);
+
+	main_sphere.Load();
+	main_sphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	myCube.Load();
+	myGraphics.SetOptimisations();		// Cull and depth testing
+}
+
+void load_geometry(
+		int ball_no = no_of_balls,
+		glm::vec4 colour = glm::vec4(
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX)
+		)
+){
+// Load Geometry
+	for (int i = 0; i < ball_no; i++)
+	{
+		Sphere new_sphere;
+		new_sphere.Load();
+		new_sphere.fillColor = colour;
+		mySpheres.push_back(new_sphere);
+	}
+}
+
 void remove_dead() {
-
 	int i = 0;
 	for (auto it = control.balls.cbegin(); it != control.balls.cend(); )
 	{
@@ -113,7 +142,8 @@ void remove_dead() {
 		else
 		{
 			float alpha = control.balls.at(i).lifetime * TRANSPARENCY_RATE;
-			mySpheres.at(i).fillColor = glm::vec4(0.0f, 1.0f, 0.0f, alpha);
+			mySpheres.at(i).fillColor.a = alpha;
+			mySpheres.at(i).lineColor.a =  alpha;
 			it++;
 			i++;
 		}
@@ -128,33 +158,8 @@ void remove_dead() {
 	}
 }
 
-void startup() {
-
-	// Calculate proj_matrix for the first time.
-	myGraphics.aspect = (float)myGraphics.windowWidth / (float)myGraphics.windowHeight;
-	myGraphics.proj_matrix = glm::perspective(glm::radians(50.0f), myGraphics.aspect, 0.1f, 1000.0f);
-
-	main_sphere.Load();
-	main_sphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	myCube.Load();
-	myGraphics.SetOptimisations();		// Cull and depth testing
-}
-
-void load_geometry(int ball_no = no_of_balls, glm::vec4 colour = glm::vec4(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX))){
-// Load Geometry
-	for (int i = 0; i < ball_no; i++)
-	{
-		Sphere new_sphere;
-		new_sphere.Load();
-		new_sphere.fillColor = colour;
-		mySpheres.push_back(new_sphere);
-	}
-}
-
 void update(double currentTime) {
 
-	auto balls = control.balls;
 	//http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 	glm::mat4 mv_matrix_cube =
 		glm::translate(glm::vec3(0.0f, -2.0f, -6.0f)) *
@@ -166,7 +171,7 @@ void update(double currentTime) {
 	glm::mat4 mv_matrix_spheres;
 
 	int i=0;
-	for (Physics_ball n : balls)
+	for (Physics_ball n : control.balls)
 	{
 		mv_matrix_spheres = glm::translate(n.position) *
 								//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
