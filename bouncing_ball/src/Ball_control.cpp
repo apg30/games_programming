@@ -7,14 +7,12 @@ Ball_control::Ball_control(){
 Ball_control::~Ball_control(){
 };
 
+//Apply physics to every ball
 void Ball_control::move_balls(float time_diff){
   int i = 0;
-  for (auto it = balls.begin(); it != balls.end(
-  ); it++,i++)	// Move every ball
-  //	for (Physics_ball n : balls)
+  for (auto it = balls.begin(); it != balls.end(); it++,i++)
   {
     balls.at(i).move_ball(time_diff);
-    //n.move_ball(time_diff);
   }
   		main_ball.move_ball(time_diff);
 }
@@ -23,15 +21,28 @@ void Ball_control::move_balls(float time_diff){
 // Create new spheres with random attributes
 void Ball_control::explode()
 {
+  // If main ball exists explode main ball.
+  // Otherwise explode from random location.
+  auto position = main_ball.position;
+  if (!main_ball.is_alive())
+  {
+    position = glm::vec3(
+               -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))),
+               -3  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))),
+               -9  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))));
+  }
 	srand(static_cast <unsigned> (time(0)));
 	for (int i = 0; i < no_of_balls; i++)
 	{
 		Physics_ball new_ball;
-		new_ball.lifetime = rand() % 200 + 300;
+		new_ball.lifetime = rand() % 200 + 500;
 		new_ball.radius = 0.02f;
-		new_ball.position = main_ball.position;
-		new_ball.velocity = glm::vec3(-7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (12))), -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (16))), -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (12))));
-		new_ball.acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+		new_ball.position = position;
+		new_ball.velocity =
+      glm::vec3(
+      -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (16))),
+      -7  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (25))),
+      -7  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (16))));
 		balls.push_back(new_ball);
 	}
 	// Kill main ball - set to 5 for small delay.

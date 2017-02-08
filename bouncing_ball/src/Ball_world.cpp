@@ -69,30 +69,37 @@ int main()
 
 	double currentTime = glfwGetTime();
 
-	do {													// MAIN LOOremove_dead_graphics()P run until the window is closed
+	do {													// MAIN LOOP run until the window is closed
+		//calculate time difference
 		double prev_time = currentTime;
-		currentTime = glfwGetTime();		// retrieve timelapse
+		currentTime = glfwGetTime();
 		double time_diff = currentTime - prev_time;
 
-		glfwPollEvents();						// poll callbacks
+		// poll callbacks
+		glfwPollEvents();
 
-		update(currentTime);					// update (physics, animation, structures, etc)
+		update(currentTime);
 
-		control.move_balls(time_diff);  //apply physics to physics_balls
+		// apply physics to physics_balls
+		control.move_balls(time_diff);
 
-		std::vector<int> removed_ball_index = control.remove_dead_balls(); // remove dead balls
+		// remove dead balls and their spheres
+		std::vector<int> removed_ball_index = control.remove_dead_balls();
 		remove_dead_spheres(removed_ball_index);
 
-		render(currentTime);					// call render function.
+		render(currentTime);
 
-		glfwSwapBuffers(myGraphics.window);		// swap buffers (avoid flickering and tearing)
+		// swap buffers (avoid flickering and tearing)
+		glfwSwapBuffers(myGraphics.window);
 
-		running &= (glfwGetKey(myGraphics.window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);	// exit if escape key pressed
+		// exit if escape key pressed
+		running &= (glfwGetKey(myGraphics.window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
 		running &= (glfwWindowShouldClose(myGraphics.window) != GL_TRUE);
 
 	} while (running);
 
-	myGraphics.endProgram();			// Close and clean everything up...
+	// Close and clean everything up
+	myGraphics.endProgram();
 
 	cout << "\nPress any key to continue...\n";
 	cin.ignore(); cin.get(); // delay closing console to read debugging errors.
@@ -113,7 +120,8 @@ void startup() {
 	myGraphics.SetOptimisations();		// Cull and depth testing
 }
 
-// load all spheres and main_sphere
+// Called to sphere(s). It loads exploded spheres unless otherwise specified
+// by the parameters in which case it loads the main sphere.
 void load_geometry(
 		int ball_no = no_of_balls,
 		glm::vec4 colour = glm::vec4(
@@ -132,8 +140,10 @@ void load_geometry(
 	}
 }
 
+// Remove spheres connected to dead balls.
+// Resize spheres list.
+// Fade spheres connected to balls that are close to dying.
 void remove_dead_spheres(std::vector<int> removed_ball_index) {
-
 	for (auto index : removed_ball_index)
 	{
 		mySpheres.erase(mySpheres.begin() + index);
@@ -157,8 +167,9 @@ void remove_dead_spheres(std::vector<int> removed_ball_index) {
 	}
 }
 
+// Update spheres' position, rotation and scale from corresponding balls
+// attributes.
 void update(double currentTime) {
-
 	//http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 	glm::mat4 mv_matrix_cube =
 		glm::translate(glm::vec3(0.0f, -2.0f, -6.0f)) *
@@ -202,6 +213,7 @@ void render(double currentTime) {
 	{
 			mySphere.Draw();
 	}
+  // If main_ball exists draw it.
 	if (control.main_ball.is_alive()){
 		main_sphere.Draw();
 	}
