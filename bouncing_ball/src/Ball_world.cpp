@@ -154,7 +154,8 @@ void remove_dead() {
 	if(control.main_ball.is_alive())
 	{
 		float alpha = control.main_ball.lifetime * TRANSPARENCY_RATE;
-		main_sphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, alpha);
+  	main_sphere.fillColor.a = alpha;
+		main_sphere.lineColor.a = alpha;
 	}
 }
 
