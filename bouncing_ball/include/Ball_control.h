@@ -13,7 +13,7 @@ public:
   void move_balls(float time_diff);
   void explode();
   void generate_ball();
-	void remove_dead();
+	std::vector<int> remove_dead_balls();
 
   std::vector<Physics_ball> balls;
 	Physics_ball main_ball;

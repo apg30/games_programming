@@ -1,11 +1,10 @@
 #include "Ball_control.h"
 
-int const no_of_balls = 100;
+extern int no_of_balls;
 
 Ball_control::Ball_control(){
 };
 Ball_control::~Ball_control(){
-
 };
 
 void Ball_control::move_balls(float time_diff){
@@ -53,14 +52,17 @@ void Ball_control::generate_ball() {
 
 // Removes physics ball and graphics ball for dead balls.
 // Must be done this way to avoid manipulating the iterator whilst iterating.
-void Ball_control::remove_dead() {
+std::vector<int> Ball_control::remove_dead_balls() {
 
+  std::vector<int> removed_ball_index;
 	int i = 0;
 	for (auto it = balls.cbegin(); it != balls.cend(); )
 	{
 		if (!balls.at(i).is_alive())
 		{
 			it = balls.erase(balls.begin() + i);
+      removed_ball_index.push_back(i);
+ 		//	mySpheres.erase(mySpheres.begin() + i);
 		}
 		else
 		{
@@ -69,4 +71,5 @@ void Ball_control::remove_dead() {
 		}
 	}
 	balls.shrink_to_fit();
+  return removed_ball_index;
 }

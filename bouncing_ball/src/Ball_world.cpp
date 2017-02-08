@@ -37,18 +37,19 @@ void update(double currentTime);
 void startup();
 void onResizeCallback(GLFWwindow* window, int w, int h);
 void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void remove_dead();
+void remove_dead_spheres(std::vector<int> removed_ball_index);
 
 // VARIABLES
 bool		running = true;
 Graphics	myGraphics;		// Runing all the graphics in this object
 Cube		myCube;
-int const no_of_balls = 100;
+int no_of_balls = 100;
 
-// Where all the balls are stored
+// All spheres and main sphere
 std::vector<Sphere>		mySpheres;
 Sphere main_sphere;
 
+// Control object to interact with physics ball
 Ball_control control;
 
 float t = 0.001f;			// Global variable for animation
@@ -77,9 +78,10 @@ int main()
 
 		update(currentTime);					// update (physics, animation, structures, etc)
 
-		control.move_balls(time_diff);
+		control.move_balls(time_diff);  //apply physics to physics_balls
 
-		remove_dead(); 	// remove dead balls
+		std::vector<int> removed_ball_index = control.remove_dead_balls(); // remove dead balls
+		remove_dead_spheres(removed_ball_index);
 
 		render(currentTime);					// call render function.
 
@@ -111,6 +113,7 @@ void startup() {
 	myGraphics.SetOptimisations();		// Cull and depth testing
 }
 
+// load all spheres and main_sphere
 void load_geometry(
 		int ball_no = no_of_balls,
 		glm::vec4 colour = glm::vec4(
@@ -119,8 +122,7 @@ void load_geometry(
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX)
 		)
-){
-// Load Geometry
+		){
 	for (int i = 0; i < ball_no; i++)
 	{
 		Sphere new_sphere;
@@ -130,26 +132,22 @@ void load_geometry(
 	}
 }
 
-void remove_dead() {
-	int i = 0;
-	for (auto it = control.balls.cbegin(); it != control.balls.cend(); )
+void remove_dead_spheres(std::vector<int> removed_ball_index) {
+
+	for (auto index : removed_ball_index)
 	{
-		if (!control.balls.at(i).is_alive())
-		{
-			it = control.balls.erase(control.balls.begin() + i);
- 			mySpheres.erase(mySpheres.begin() + i);
-		}
-		else
-		{
-			float alpha = control.balls.at(i).lifetime * TRANSPARENCY_RATE;
-			mySpheres.at(i).fillColor.a = alpha;
-			mySpheres.at(i).lineColor.a =  alpha;
-			it++;
-			i++;
-		}
+		mySpheres.erase(mySpheres.begin() + index);
 	}
-	control.balls.shrink_to_fit();
 	mySpheres.shrink_to_fit();
+
+	int i = 0;
+	for (auto ball : control.balls)
+	{
+		float alpha = ball.lifetime * TRANSPARENCY_RATE;
+		mySpheres.at(i).fillColor.a = alpha;
+		mySpheres.at(i).lineColor.a =  alpha;
+		i++;
+	}
 
 	if(control.main_ball.is_alive())
 	{
@@ -207,8 +205,6 @@ void render(double currentTime) {
 	if (control.main_ball.is_alive()){
 		main_sphere.Draw();
 	}
-
-		//myCube.Draw();
 }
 
 void onResizeCallback(GLFWwindow* window, int w, int h) {	// call everytime the window is resized
