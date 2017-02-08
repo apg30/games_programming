@@ -47,11 +47,9 @@ int const no_of_balls = 100;
 
 // Where all the balls are stored
 std::vector<Sphere>		mySpheres;
-
+Sphere main_sphere;
 
 Ball_control control;
-// The main is the only one which can be exploded.
-Sphere main_sphere;
 
 float t = 0.001f;			// Global variable for animation
 
@@ -81,7 +79,6 @@ int main()
 
 		control.move_balls(time_diff);
 
-
 		remove_dead();							// remove dead balls
 		render(currentTime);					// call render function.
 
@@ -105,24 +102,23 @@ int main()
 // Must be done this way to avoid manipulating the iterator whilst iterating.
 void remove_dead() {
 
-	auto balls = control.balls;
 	int i = 0;
-	for (auto it = balls.cbegin(); it != balls.cend(); )
+	for (auto it = control.balls.cbegin(); it != control.balls.cend(); )
 	{
-		if (!balls.at(i).is_alive())
+		if (!control.balls.at(i).is_alive())
 		{
-			it = balls.erase(balls.begin() + i);
+			it = control.balls.erase(control.balls.begin() + i);
  			mySpheres.erase(mySpheres.begin() + i);
 		}
 		else
 		{
-			float alpha = balls.at(i).lifetime * TRANSPARENCY_RATE;
+			float alpha = control.balls.at(i).lifetime * TRANSPARENCY_RATE;
 			mySpheres.at(i).fillColor = glm::vec4(0.0f, 1.0f, 0.0f, alpha);
 			it++;
 			i++;
 		}
 	}
-	balls.shrink_to_fit();
+	control.balls.shrink_to_fit();
 	mySpheres.shrink_to_fit();
 
 	if(control.main_ball.is_alive())
@@ -145,9 +141,9 @@ void startup() {
 	myGraphics.SetOptimisations();		// Cull and depth testing
 }
 
-void load_geometry(glm::vec4 colour = glm::vec4(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX))){
+void load_geometry(int ball_no = no_of_balls, glm::vec4 colour = glm::vec4(static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX), static_cast <float> (rand()) / static_cast <float> (RAND_MAX))){
 // Load Geometry
-	for (int i = 0; i < no_of_balls; i++)
+	for (int i = 0; i < ball_no; i++)
 	{
 		Sphere new_sphere;
 		new_sphere.Load();
@@ -228,7 +224,7 @@ void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mo
 	if (key == GLFW_KEY_G && action == GLFW_PRESS)
 	{
 		control.generate_ball();
-		load_geometry(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		load_geometry(1,glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 	//if (key == GLFW_KEY_LEFT) angleY += 0.05f;
 }

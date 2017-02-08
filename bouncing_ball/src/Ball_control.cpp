@@ -1,5 +1,3 @@
-#include "Physics_ball.h"
-
 #include "Ball_control.h"
 
 int const no_of_balls = 100;
@@ -40,7 +38,6 @@ void Ball_control::explode()
 	// Kill main ball - set to 5 for small delay.
 	main_ball.lifetime = 5;
 }
-
 
 void Ball_control::generate_ball() {
 

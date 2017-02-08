@@ -2,6 +2,7 @@
 #define BALL_CONTROL
 
 #include <algorithm>
+#include "Physics_ball.h"
 
 
 class Ball_control {
