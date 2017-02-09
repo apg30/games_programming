@@ -19,9 +19,12 @@ using namespace std;
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+//to remove
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include "glm/ext.hpp"
+
 #include <algorithm>
 
 #include "Vector_library.h"
@@ -34,7 +37,7 @@ using namespace std;
 bool		running = true;
 Graphics	myGraphics;		// Runing all the graphics in this object
 Cube		myCube;
-int no_of_balls = 100;
+int no_of_boids = 100;
 
 // FUNCTIONS
 void render(double currentTime);
@@ -53,7 +56,6 @@ Boid_control control;
 
 float t = 0.001f;			// Global variable for animation
 
-
 void startup() {
 
 	// Calculate proj_matrix for the first time.
@@ -67,7 +69,7 @@ void startup() {
 // Called to sphere(s). It loads exploded spheres unless otherwise specified
 // by the parameters in which case it loads the main sphere.
 void load_geometry(
-		int ball_no = no_of_balls,
+		int ball_no = no_of_boids,
 		glm::vec4 colour = glm::vec4(
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
@@ -83,7 +85,7 @@ void load_geometry(
 	}
 }
 
-// Update spheres' position, rotation and scale from corresponding balls
+// Update spheres' position, rotation and scale from corresponding boids
 // attributes.
 void update(double currentTime) {
 	//http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
@@ -97,7 +99,7 @@ void update(double currentTime) {
 	glm::mat4 mv_matrix_spheres;
 
 	int i=0;
-	for (physics_boid n : control.balls)
+	for (physics_boid n : control.boids)
 	{
 		mv_matrix_spheres = glm::translate(n.position) *
 								//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *

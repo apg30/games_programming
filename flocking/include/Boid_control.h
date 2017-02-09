@@ -12,9 +12,12 @@ public:
 
   void move_boids(float time_diff);
   void generate_boids();
+	std::vector<glm::vec3> align_boids();
+	void cohere_boids();
+	void seperate_boids();
+	bool are_neighbours(physics_boid boid_1, physics_boid boid_2);
 
-
-  std::vector<physics_boid> balls;
+  std::vector<physics_boid> boids;
 	physics_boid main_ball;
 };
 
