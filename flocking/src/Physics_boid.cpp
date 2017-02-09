@@ -1,11 +1,11 @@
 #include <glm/glm.hpp>
-#include "Physics_ball.h"
+#include "Physics_boid.h"
+#include <iostream>
+
 #define GROUND -2
 #define NOISE 0.2
 
-#include <iostream>
-
-Physics_ball::Physics_ball() {
+physics_boid::physics_boid() {
 	position = glm::vec3(0.0f, 0.0f, -6.0f);
 	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	acceleration = glm::vec3(0.0f, -9.8f, 0.0f);
@@ -13,10 +13,10 @@ Physics_ball::Physics_ball() {
 	lifetime = 700;
 	radius = 1;
 };
-Physics_ball::~Physics_ball() {};
+physics_boid::~physics_boid() {};
 
 // Set balls new velocity. calculate balls new position. decrement balls lifetime.
-void Physics_ball::move_ball(double time_diff) {
+void physics_boid::move_ball(double time_diff) {
 
 	if (has_hit_ground(position))
 	{
@@ -41,13 +41,13 @@ void Physics_ball::move_ball(double time_diff) {
 	decrement_lifetime();
 }
 
-void Physics_ball::add_friction() {
+void physics_boid::add_friction() {
 	velocity.x *= friction.x;
 	velocity.y *= friction.y;
 	velocity.z *= friction.z;
 }
 
-void Physics_ball::decrement_lifetime() {
+void physics_boid::decrement_lifetime() {
 	lifetime -= 1;
 	if (lifetime < 0)
 	{
@@ -56,7 +56,7 @@ void Physics_ball::decrement_lifetime() {
 	std::cout << lifetime << std::endl;
 }
 
-bool Physics_ball::is_alive()
+bool physics_boid::is_alive()
 {
 	if (lifetime > 0)
 	{
@@ -68,7 +68,7 @@ bool Physics_ball::is_alive()
 	}
 }
 
-bool Physics_ball::has_hit_ground(glm::vec3 position)
+bool physics_boid::has_hit_ground(glm::vec3 position)
 {
 	if (position.y <= GROUND)
 	{
@@ -78,7 +78,7 @@ bool Physics_ball::has_hit_ground(glm::vec3 position)
 		return false;
 }
 
-void Physics_ball::calculate_position(double time_diff)
+void physics_boid::calculate_position(double time_diff)
 {
 	velocity.x += acceleration.x * time_diff;
 	position.x += velocity.x * time_diff + 0.5 * acceleration.x * pow(time_diff, 2);

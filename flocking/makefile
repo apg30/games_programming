@@ -1,4 +1,4 @@
-SRCS=Graphics.cpp Shapes.cpp Physics_ball.cpp Ball_world.cpp Ball_control.cpp
+SRCS=Graphics.cpp Shapes.cpp Physics_boid.cpp Boid_world.cpp Boid_control.cpp
 SRC_DIR= $(addprefix src/,$(SRCS))
 LFLAGS=-lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
 

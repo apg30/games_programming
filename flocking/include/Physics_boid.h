@@ -1,12 +1,12 @@
-#ifndef PHYSICS_BALL_H
-#define PHYSICS_BALL_H
+#ifndef PHYSCIS_BOID_H
+#define PHYSCIS_BOID_H
 
 #include <glm/glm.hpp>
 
-class Physics_ball {
+class physics_boid {
 public:
-	Physics_ball();
-	~Physics_ball();
+	physics_boid();
+	~physics_boid();
 	void move_ball(double time_diff);
 	bool has_hit_ground(glm::vec3 position);
 	void calculate_position(double time_diff);

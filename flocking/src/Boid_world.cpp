@@ -27,8 +27,8 @@ using namespace std;
 #include "Vector_library.h"
 #include "Graphics.h"
 #include "Shapes.h"
-#include "Physics_ball.h"
-#include "Ball_control.h"
+#include "Physics_boid.h"
+#include "Boid_control.h"
 
 // VARIABLES
 bool		running = true;
@@ -49,7 +49,7 @@ void remove_dead_spheres(std::vector<int> removed_ball_index);
 std::vector<Sphere>		mySpheres;
 
 // Control object to interact with physics ball
-Ball_control control;
+Boid_control control;
 
 float t = 0.001f;			// Global variable for animation
 
@@ -97,7 +97,7 @@ void update(double currentTime) {
 	glm::mat4 mv_matrix_spheres;
 
 	int i=0;
-	for (Physics_ball n : control.balls)
+	for (physics_boid n : control.balls)
 	{
 		mv_matrix_spheres = glm::translate(n.position) *
 								//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
@@ -172,7 +172,7 @@ int main()
 
 		update(currentTime);
 
-		// apply physics to physics_balls
+		// apply physics to physics_boids
 		control.move_boids(time_diff);
 
 		render(currentTime);
