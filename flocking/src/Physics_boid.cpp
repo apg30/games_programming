@@ -9,53 +9,29 @@
 #include <iostream>
 using namespace std;
 
-#define X_MIN -3
-#define X_MAX 3
-#define Y_MIN -3
-#define Y_MAX 3
-#define Z_MIN -7
-#define Z_MAX -5
+#define X_MIN -1.5f
+#define X_MAX 1.5f
+#define Y_MIN X_MIN
+#define Y_MAX X_MAX
+#define Z_MIN -9.0f
+#define Z_MAX -3.0f
+#define BOUNDARY_BUFFER 0.05f
+#define MAX_SPEED 0.8
 
 physics_boid::physics_boid() {
 	position = glm::vec3(0.0f, 0.0f, -6.0f);
-	velocity = glm::vec3(1.0f, 1.0f, 1.0f);
-	acceleration = glm::vec3(1.0f, 1.0f, 1.0f);
-	friction = glm::vec3(0.9f, 1.0f, 0.9f);
+	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+	acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+	friction = glm::vec3(1.0f, 1.0f, 1.0f);
 	lifetime = 700;
 	radius = 1;
 };
 physics_boid::~physics_boid() {};
 
-
-void physics_boid::check_out_of_bounds()
-{
-	// if out of bounds wrap round
-	if (position.x < X_MIN)
-	{
-		position.x = X_MAX -1;
-	}
-	if (position.x > X_MAX)
-	{
-		position.x = X_MIN +1;
-	}
-
-	if (position.y < Y_MIN)
-	{
-		position.y = Y_MAX -1;
-	}
-	if (position.y > Y_MAX)
-	{
-		position.y = Y_MIN +1;
-	}
-
-	if (position.y < Y_MIN)
-	{
-		position.y = Y_MAX -1;
-	}
-	if (position.y > Y_MAX)
-	{
-		position.y = Y_MIN + 1;
-	}
+void physics_boid::move_ball(double time_diff) {
+	check_top_speed();
+	calculate_position(time_diff);
+	check_out_of_bounds();
 }
 
 void physics_boid::calculate_position(double time_diff)
@@ -68,17 +44,50 @@ void physics_boid::calculate_position(double time_diff)
 
 	velocity.z += acceleration.z * time_diff;
 	position.z += velocity.z * time_diff + 0.5 * acceleration.z * pow(time_diff, 2);
-
-	//std::cout << "vel" << glm::to_string(velocity) << std::endl;
-//	std::cout << "time_diff" << time_diff << std::endl;
-//	std::cout << "acceleration" << glm::to_string(acceleration) << std::endl;
-
-	check_out_of_bounds();
 }
 
-void physics_boid::move_ball(double time_diff) {
+void physics_boid::check_top_speed(){
+  if (velocity.x > MAX_SPEED){
+    velocity.x = (velocity.x / abs(velocity.x) * MAX_SPEED);
+  }
+  if (velocity.y > MAX_SPEED){
+    velocity.y = (velocity.y / abs(velocity.y) * MAX_SPEED);
+  }
+  if (velocity.z > MAX_SPEED){
+    velocity.z = (velocity.z / abs(velocity.z) * MAX_SPEED);
+  }
+}
 
-	calculate_position(time_diff);
+void physics_boid::check_out_of_bounds()
+{
+	// if out of bounds wrap round
+	if (position.x < X_MIN)
+	{
+		position.x = X_MAX - BOUNDARY_BUFFER;
+	}
+	if (position.x > X_MAX)
+	{
+		position.x = X_MIN + BOUNDARY_BUFFER;
+	}
+
+	if (position.y < Y_MIN)
+	{
+		position.y = Y_MAX - BOUNDARY_BUFFER;
+	}
+	if (position.y > Y_MAX)
+	{
+		position.y = Y_MIN + BOUNDARY_BUFFER;
+	}
+
+	//if out of bounds come back round slowly.
+	if (position.z < Z_MIN)
+	{
+		velocity.z = velocity.z + 5; //position.z = Z_MAX - BOUNDARY_BUFFER;
+	}
+	if (position.z > Z_MAX)
+	{
+		velocity.z = velocity.z - 5; //Z_MIN + BOUNDARY_BUFFER;
+	}
 
 }
 

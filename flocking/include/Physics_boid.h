@@ -8,6 +8,8 @@ public:
 	physics_boid();
 	~physics_boid();
 	void check_out_of_bounds();
+	void check_top_speed();
+
 	void calculate_position(double time_diff);
 	bool operator!=(physics_boid boid);
 	void move_ball(double time_diff);

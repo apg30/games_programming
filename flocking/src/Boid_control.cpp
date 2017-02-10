@@ -1,5 +1,7 @@
-#define LOCAL_LEVEL 2
-#define K 2
+#define LOCAL_LEVEL 0.5
+#define K_ALIGN 0.003
+#define K_COHERE 0.003
+#define K_SEPERATE 0.003
 
 #include <algorithm>    // std::max
 #include <iostream>
@@ -16,34 +18,31 @@ Boid_control::Boid_control(){
 Boid_control::~Boid_control(){
 };
 
-glm::vec3 top_velocity(glm::vec3 velocity){
-  velocity.x = min(1.0f,velocity.x);
-  velocity.y = min(1.0f,velocity.y);
-  velocity.z = min(1.0f,velocity.z);
-  return velocity;
-}
 
 //Apply swarm behaviour
 void Boid_control::move_boids(float time_diff){
 
   // find alignment from all 3 algorithms.
-  auto combined_alignment = align_boids()  ; //other calculations
+  std::vector<glm::vec3> seperate_velocity =  seperate_boids();
+  std::vector<glm::vec3> align_velocity =  align_boids();
+  std::vector<glm::vec3> cohere_velocity =  cohere_boids();
 
   // For every boid
   int i = 0;
   for (auto it = boids.begin(); it != boids.end(); it++,i++)
   {
-    boids.at(i).velocity += combined_alignment.at(i);
-    // Cap out top weight.
-    boids.at(i).velocity = top_velocity(boids.at(i).velocity);
+    boids.at(i).velocity = seperate_velocity.at(i);
+  //  boids.at(i).velocity += align_velocity.at(i);
+  //  boids.at(i).velocity += cohere_velocity.at(i);
 
-    boids.at(i).calculate_position(time_diff);
+    boids.at(i).move_ball(time_diff);
   }
 }
 
+//***********************Movement algorithms***********************************
 std::vector<glm::vec3> Boid_control::align_boids()
 {
-  std::vector<glm::vec3> align_boids_alignment;
+  std::vector<glm::vec3> align_velocity;
   for (auto boid : boids)
   {
     int neighbours = 0;
@@ -60,25 +59,71 @@ std::vector<glm::vec3> Boid_control::align_boids()
     }
     alignmentment /= neighbours;
     // Normalise
-    alignmentment /= sqrt(pow(alignmentment.x,2) + pow(alignmentment.y,2) + pow(alignmentment.z,2));
+    alignmentment = normalise_vector(alignmentment);
     // Add Weighting
-    alignmentment = alignmentment * K;
+    alignmentment = alignmentment * K_ALIGN;
     // Normalise
-    alignmentment /= sqrt(pow(alignmentment.x,2) + pow(alignmentment.y,2) + pow(alignmentment.z,2));
-    // Add to list.
-    align_boids_alignment.push_back(alignmentment);
+    alignmentment = normalise_vector(alignmentment);    // Add to list.
+    align_velocity.push_back(alignmentment);
   }
-  return align_boids_alignment;
+  return align_velocity;
 }
 
-void Boid_control::cohere_boids()
+std::vector<glm::vec3> Boid_control::cohere_boids()
 {
+  std::vector<glm::vec3> cohere_velocity;
+  for (auto boid : boids)
+  {
+    int neighbours = 0;
+    glm::vec3 centre_position;// = boid.position;
 
+    for (auto potential_neighbour : boids)
+    {
+       if(are_neighbours(boid, potential_neighbour)) //TODO check it isn't equal to itself.
+       {
+         centre_position += potential_neighbour.position;
+        // std::cout << "alignmentment: " << glm::to_string(alignmentment) << std::endl;
+         neighbours +=1;
+       }
+    }
+    // Averaging
+    centre_position /= neighbours;
+    // allignment_vector
+    auto direction_vector = centre_position - boid.position;
+    // Add weighting
+    direction_vector *= K_COHERE;
+    direction_vector = normalise_vector(direction_vector);
+    cohere_velocity.push_back(direction_vector);
+   }
+   return cohere_velocity;
 }
 
-void Boid_control::seperate_boids()
+std::vector<glm::vec3> Boid_control::seperate_boids()
 {
+  std::vector<glm::vec3> seperation_velocity;
+  for (auto boid : boids)
+  {
+    glm::vec3 direction_vector;
 
+    for (auto potential_neighbour : boids)
+    {
+       if(are_neighbours(boid, potential_neighbour)) //TODO check it isn't equal to itself.
+       {
+         direction_vector = direction_vector + (boid.position - potential_neighbour.position);
+       }
+    }
+    direction_vector *= K_SEPERATE;
+    direction_vector = normalise_vector(direction_vector);
+    seperation_velocity.push_back(direction_vector);
+   }
+   return seperation_velocity;
+}
+
+//*****************************************************************************
+glm::vec3 Boid_control::normalise_vector(glm::vec3 vector)
+{
+  vector /= sqrt(pow(vector.x,2) + pow(vector.y,2) + pow(vector.z,2));
+  return vector;
 }
 
 bool Boid_control::are_neighbours(physics_boid boid_1, physics_boid boid_2)
@@ -94,9 +139,6 @@ bool Boid_control::are_neighbours(physics_boid boid_1, physics_boid boid_2)
    return false;
 }
 
-
-
-
 // Create new boids with random attributes.
 // Create new spheres with random attributes
 void Boid_control::generate_boids()
@@ -106,7 +148,7 @@ void Boid_control::generate_boids()
 	{
 		physics_boid new_ball;
 		new_ball.lifetime = rand() % 200 + 500;
-		new_ball.radius = 0.02f;
+		new_ball.radius = 0.1f;
 		new_ball.position = glm::vec3(
                -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))),
                -3  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))),

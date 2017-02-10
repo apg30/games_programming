@@ -47,7 +47,6 @@ void onResizeCallback(GLFWwindow* window, int w, int h);
 void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void remove_dead_spheres(std::vector<int> removed_ball_index);
 
-
 // All spheres and main sphere
 std::vector<Sphere>		mySpheres;
 
