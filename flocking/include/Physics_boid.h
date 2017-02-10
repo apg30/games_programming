@@ -14,12 +14,9 @@ public:
 	bool operator!=(physics_boid boid);
 	void move_ball(double time_diff);
 
-	glm::vec3 friction;
 	glm::vec3 position;
 	glm::vec3 velocity;
 	glm::vec3 acceleration;
-	float lifetime;
-	float mass;
 	float radius;
 private:
 

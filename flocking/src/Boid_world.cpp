@@ -45,7 +45,7 @@ void update(double currentTime);
 void startup();
 void onResizeCallback(GLFWwindow* window, int w, int h);
 void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void remove_dead_spheres(std::vector<int> removed_ball_index);
+void load_geometry(int ball_no);
 
 // All spheres and main sphere
 std::vector<Sphere>		mySpheres;
@@ -67,19 +67,16 @@ void startup() {
 
 // Called to sphere(s). It loads exploded spheres unless otherwise specified
 // by the parameters in which case it loads the main sphere.
-void load_geometry(
-		int ball_no = no_of_boids,
-		glm::vec4 colour = glm::vec4(
-			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
-			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
-			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
-			static_cast <float> (rand()) / static_cast <float> (RAND_MAX))
-		){
+void load_geometry(int ball_no = no_of_boids){
 	for (int i = 0; i < ball_no; i++)
 	{
 		Sphere new_sphere;
 		new_sphere.Load();
-		new_sphere.fillColor = colour;
+		new_sphere.fillColor = glm::vec4(
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+			static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
 		mySpheres.push_back(new_sphere);
 	}
 }
@@ -96,7 +93,6 @@ void update(double currentTime) {
 
 	// calculate Spheres' movement
 	glm::mat4 mv_matrix_spheres;
-
 	int i=0;
 	for (physics_boid n : control.boids)
 	{
@@ -176,6 +172,7 @@ int main()
 		// apply physics to physics_boids
 		control.move_boids(time_diff);
 
+		// render spheres.
 		render(currentTime);
 
 		// swap buffers (avoid flickering and tearing)

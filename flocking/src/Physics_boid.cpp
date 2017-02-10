@@ -9,21 +9,19 @@
 #include <iostream>
 using namespace std;
 
-#define X_MIN -1.5f
-#define X_MAX 1.5f
+#define X_MIN -3.0f
+#define X_MAX 3.0f
 #define Y_MIN X_MIN
 #define Y_MAX X_MAX
 #define Z_MIN -9.0f
 #define Z_MAX -3.0f
 #define BOUNDARY_BUFFER 0.05f
-#define MAX_SPEED 0.8
+#define MAX_SPEED 2
 
 physics_boid::physics_boid() {
 	position = glm::vec3(0.0f, 0.0f, -6.0f);
 	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
-	friction = glm::vec3(1.0f, 1.0f, 1.0f);
-	lifetime = 700;
 	radius = 1;
 };
 physics_boid::~physics_boid() {};
@@ -92,12 +90,12 @@ void physics_boid::check_out_of_bounds()
 }
 
 bool physics_boid::operator!=(physics_boid boid){
-	if (position== boid.position && lifetime == boid.lifetime && mass == boid.mass)
+	if (position == boid.position && velocity == boid.velocity)
 	{
-		return true;
+		return false;
 	}
 	else
 	{
-		return false;
+		return true;
 	}
 }
