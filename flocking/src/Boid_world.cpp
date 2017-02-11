@@ -94,7 +94,7 @@ void update(double currentTime) {
 	// calculate Spheres' movement
 	glm::mat4 mv_matrix_spheres;
 	int i=0;
-	for (physics_boid n : control.boids)
+	for (Physics_boid n : control.boids)
 	{
 		mv_matrix_spheres = glm::translate(n.position) *
 								//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
@@ -169,7 +169,7 @@ int main()
 
 		update(currentTime);
 
-		// apply physics to physics_boids
+		// apply physics to Physics_boids
 		control.move_boids(time_diff);
 
 		// render spheres.

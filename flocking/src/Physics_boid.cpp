@@ -18,21 +18,21 @@ using namespace std;
 #define BOUNDARY_BUFFER 0.05f
 #define MAX_SPEED 2
 
-physics_boid::physics_boid() {
+Physics_boid::Physics_boid() {
 	position = glm::vec3(0.0f, 0.0f, -6.0f);
 	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	radius = 1;
 };
-physics_boid::~physics_boid() {};
+Physics_boid::~Physics_boid() {};
 
-void physics_boid::move_ball(double time_diff) {
+void Physics_boid::move_ball(double time_diff) {
 	check_top_speed();
 	calculate_position(time_diff);
 	check_out_of_bounds();
 }
 
-void physics_boid::calculate_position(double time_diff)
+void Physics_boid::calculate_position(double time_diff)
 {
 	velocity.x += acceleration.x * time_diff;
 	position.x += velocity.x * time_diff + 0.5 * acceleration.x * pow(time_diff, 2);
@@ -44,7 +44,7 @@ void physics_boid::calculate_position(double time_diff)
 	position.z += velocity.z * time_diff + 0.5 * acceleration.z * pow(time_diff, 2);
 }
 
-void physics_boid::check_top_speed(){
+void Physics_boid::check_top_speed(){
   if (velocity.x > MAX_SPEED){
     velocity.x = (velocity.x / abs(velocity.x) * MAX_SPEED);
   }
@@ -56,7 +56,7 @@ void physics_boid::check_top_speed(){
   }
 }
 
-void physics_boid::check_out_of_bounds()
+void Physics_boid::check_out_of_bounds()
 {
 	// if out of bounds wrap round
 	if (position.x < X_MIN)
@@ -89,7 +89,7 @@ void physics_boid::check_out_of_bounds()
 
 }
 
-bool physics_boid::operator!=(physics_boid boid){
+bool Physics_boid::operator!=(Physics_boid boid){
 	if (position == boid.position && velocity == boid.velocity)
 	{
 		return false;

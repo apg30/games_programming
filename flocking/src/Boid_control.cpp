@@ -149,7 +149,7 @@ glm::vec3 Boid_control::normalise_vector(glm::vec3 vector)
   return vector;
 }
 
-bool Boid_control::are_neighbours(physics_boid boid_1, physics_boid boid_2)
+bool Boid_control::are_neighbours(Physics_boid boid_1, Physics_boid boid_2)
 {
    auto diff_x = abs(boid_1.position.x - boid_2.position.x);
    auto diff_y = abs(boid_1.position.y - boid_2.position.y);
@@ -169,7 +169,7 @@ void Boid_control::generate_boids()
 	srand(static_cast <unsigned> (time(0)));
 	for (int i = 0; i < no_of_boids; i++)
 	{
-		physics_boid new_ball;
+		Physics_boid new_ball;
 		new_ball.radius = 0.1f;
 		new_ball.position = glm::vec3(
                -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))),

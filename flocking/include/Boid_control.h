@@ -18,7 +18,7 @@ public:
 	void align_boids();
 	void cohere_boids();
 	void seperate_boids();
-	bool are_neighbours(physics_boid boid_1, physics_boid boid_2);
+	bool are_neighbours(Physics_boid boid_1, Physics_boid boid_2);
 	glm::vec3 normalise_vector(glm::vec3 vector);
 
 	// Member variables
@@ -26,7 +26,7 @@ public:
 	glm::vec3 cohere_velocities[NO_OF_BOIDS];
 	glm::vec3 seperate_velocities[NO_OF_BOIDS];
 
-  physics_boid boids[NO_OF_BOIDS];
+  Physics_boid boids[NO_OF_BOIDS];
 };
 
 #endif

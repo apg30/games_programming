@@ -3,15 +3,15 @@
 
 #include <glm/glm.hpp>
 
-class physics_boid {
+class Physics_boid {
 public:
-	physics_boid();
-	~physics_boid();
+	Physics_boid();
+	~Physics_boid();
 	void check_out_of_bounds();
 	void check_top_speed();
 
 	void calculate_position(double time_diff);
-	bool operator!=(physics_boid boid);
+	bool operator!=(Physics_boid boid);
 	void move_ball(double time_diff);
 
 	glm::vec3 position;
