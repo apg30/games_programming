@@ -37,7 +37,7 @@ using namespace std;
 bool		running = true;
 Graphics	myGraphics;		// Runing all the graphics in this object
 Cube		myCube;
-int no_of_boids = 100;
+int const no_of_boids = 100;
 
 // FUNCTIONS
 void render(double currentTime);
@@ -48,7 +48,7 @@ void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mo
 void load_geometry(int ball_no);
 
 // All spheres and main sphere
-std::vector<Sphere>		mySpheres;
+Sphere	mySpheres[no_of_boids];
 
 // Control object to interact with physics ball
 Boid_control control;
@@ -77,7 +77,7 @@ void load_geometry(int ball_no = no_of_boids){
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
-		mySpheres.push_back(new_sphere);
+		mySpheres[i]= new_sphere;
 	}
 }
 
@@ -101,8 +101,8 @@ void update(double currentTime) {
 								//glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
 								glm::mat4(1.0f) *
 								glm::scale(glm::vec3(n.radius, n.radius, n.radius));
-			mySpheres.at(i).mv_matrix = mv_matrix_spheres;
-			mySpheres.at(i).proj_matrix = myGraphics.proj_matrix;
+			mySpheres[i].mv_matrix = mv_matrix_spheres;
+			mySpheres[i].proj_matrix = myGraphics.proj_matrix;
 			i++;
 	}
 
@@ -114,9 +114,9 @@ void render(double currentTime) {
 	myGraphics.ClearViewport();
 
 	// Draw
-	for (Sphere mySphere : mySpheres)
+	for (int i = 0; i< no_of_boids; i++)
 	{
-			mySphere.Draw();
+			 mySpheres[i].Draw();
 	}
 }
 

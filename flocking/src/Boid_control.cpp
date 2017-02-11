@@ -1,5 +1,5 @@
 #define LOCAL_LEVEL 2
-#define K_ALIGN 0.3
+#define K_ALIGN 1.0
 #define K_COHERE 0.3
 #define K_SEPERATE 0.3
 
@@ -11,7 +11,7 @@
 #include "glm/ext.hpp"
 using namespace std;
 
-extern int no_of_boids;
+const int no_of_boids = 100;
 
 Boid_control::Boid_control(){
 };
@@ -23,13 +23,13 @@ void Boid_control::move_boids(float time_diff){
 
   // find alignment from all 3 algorithms.
   align_boids();
-//  seperate_boids();
-//  cohere_boids();
+  seperate_boids();
+  cohere_boids();
 
   // For every boid
   for (int i = 0; i < no_of_boids; i++)
   {
-    boids[i].velocity += align_velocities[i];
+    boids[i].velocity = align_velocities[i];
     boids[i].velocity += cohere_velocities[i];
     boids[i].velocity += seperate_velocities[i];
 

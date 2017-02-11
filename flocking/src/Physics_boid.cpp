@@ -16,7 +16,7 @@ using namespace std;
 #define Z_MIN -9.0f
 #define Z_MAX -3.0f
 #define BOUNDARY_BUFFER 0.05f
-#define MAX_SPEED 2
+#define MAX_SPEED 0.5
 
 Physics_boid::Physics_boid() {
 	position = glm::vec3(0.0f, 0.0f, -6.0f);
