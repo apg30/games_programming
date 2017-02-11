@@ -1,5 +1,5 @@
 #define LOCAL_LEVEL 2
-#define K_ALIGN 1.0
+#define K_ALIGN 0.3
 #define K_COHERE 0.3
 #define K_SEPERATE 0.3
 
@@ -30,8 +30,8 @@ void Boid_control::move_boids(float time_diff){
   for (int i = 0; i < no_of_boids; i++)
   {
     boids[i].velocity = align_velocities[i];
-    boids[i].velocity += cohere_velocities[i];
-    boids[i].velocity += seperate_velocities[i];
+    boids[i].velocity = cohere_velocities[i];
+    boids[i].velocity = seperate_velocities[i];
 
     // Move ball: it checks top speed and if out of bounds
     boids[i].move_ball(time_diff);
@@ -68,11 +68,11 @@ void Boid_control::align_boids()
     // Find average velocity of neighours.
     alignment = alignment / float(neighbours);
     // Normalise vector
-    //alignment = normalise_vector(alignment);
+    alignment = normalise_vector(alignment);
     // Add Weighting
     alignment = alignment * K_ALIGN;
     // Normalise
-    // alignment = normalise_vector(alignment);
+   alignment = normalise_vector(alignment);
     // Add to list.
     align_velocities[i] = alignment;
     }
@@ -110,11 +110,11 @@ void Boid_control::cohere_boids()
     // Get direction from current position to centre position.
     direction_vector = centre_position - boids[i].position;
     // Normalise
-  //direction_vector = normalise_vector(direction_vector);
+    direction_vector = normalise_vector(direction_vector);
     // Add weighting
     direction_vector *= K_COHERE;
     // Normalise
-  //direction_vector = normalise_vector(direction_vector);
+    direction_vector = normalise_vector(direction_vector);
     // Add to velocity list.
       cohere_velocities[i] = direction_vector;
     }
@@ -133,11 +133,12 @@ void Boid_control::seperate_boids()
       // Check boid is not itself & Check other boid is in the neighbourhood
       if (boids[i] != boids[j] && are_neighbours(boids[i], boids[j]))
       {
-         direction_vector = direction_vector - (boids[i].position - boids[j].position);
+         direction_vector = direction_vector + (boids[i].position - boids[j].position);
       }
     }
+    direction_vector = normalise_vector(direction_vector);
     direction_vector *= K_SEPERATE;
-  //direction_vector = normalise_vector(direction_vector);
+    direction_vector = normalise_vector(direction_vector);
     seperate_velocities[i] = direction_vector;
    }
 }
