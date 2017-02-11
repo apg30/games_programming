@@ -22,49 +22,46 @@ Boid_control::~Boid_control(){
 void Boid_control::move_boids(float time_diff){
 
   // find alignment from all 3 algorithms.
-  std::vector<glm::vec3> seperate_velocity =  seperate_boids();
-  std::vector<glm::vec3> align_velocity =  align_boids();
-  std::vector<glm::vec3> cohere_velocity =  cohere_boids();
+  align_boids();
+//  seperate_boids();
+//  cohere_boids();
 
   // For every boid
-  int i = 0;
-  for (auto it = boids.begin(); it != boids.end(); it++,i++)
+  for (int i = 0; i < no_of_boids; i++)
   {
-  //  boids.at(i).velocity += seperate_velocity.at(i);
-    boids.at(i).velocity += align_velocity.at(i);
-  //  boids.at(i).velocity += cohere_velocity.at(i);
+    boids[i].velocity += align_velocities[i];
+    boids[i].velocity += cohere_velocities[i];
+    boids[i].velocity += seperate_velocities[i];
 
     // Move ball: it checks top speed and if out of bounds
-    boids.at(i).move_ball(time_diff);
+    boids[i].move_ball(time_diff);
   }
 }
 
 //***********************Movement algorithms***********************************
-std::vector<glm::vec3> Boid_control::align_boids()
+void Boid_control::align_boids()
 {
-  // List of velocity vectors
-  std::vector<glm::vec3> align_velocity;
   // For every boid
-  for (auto boid : boids)
+  for (int i = 0; i < no_of_boids; i++)
   {
     // The alignment for each boid.
     glm::vec3 alignment;
     int neighbours = 0;
     // Find out if boid and other boid are a neighbour.
-    for (auto potential_neighbour : boids)
+    for (int j = 0; j < no_of_boids; j++)
     {
       // Check boid if not itself &  Check other boid is in the neighbourhood
-      if(boid != potential_neighbour && are_neighbours(boid, potential_neighbour))
+      if(boids[i] != boids[j] && are_neighbours(boids[i], boids[j]))
       {
          // Total neighbours velocities
-         alignment += potential_neighbour.velocity;
+         alignment += boids[j].velocity;
          // Keep track of number of neighbours
          neighbours +=1;
        }
     }
     if(neighbours == 0)
     {
-      align_velocity.push_back(glm::vec3(0.0f, 0.0f,0.0f));
+      align_velocities[i] = glm::vec3(0.0f, 0.0f,0.0f);
     }
     else
     {
@@ -77,44 +74,41 @@ std::vector<glm::vec3> Boid_control::align_boids()
     // Normalise
     // alignment = normalise_vector(alignment);
     // Add to list.
-    align_velocity.push_back(alignment);
+    align_velocities[i] = alignment;
     }
   }
-  return align_velocity;
 }
 
-std::vector<glm::vec3> Boid_control::cohere_boids()
+void Boid_control::cohere_boids()
 {
-  // List for the cohere velocity of each boid
-  std::vector<glm::vec3> cohere_velocity;
   // For each boid
-  for (auto boid : boids)
+  for (int i = 0; i < no_of_boids; i++)
   {
     int neighbours = 0;
     // The centre position of all the boids in the neighbourhood
     glm::vec3 centre_position;
     glm::vec3 direction_vector;
     // For every boid
-    for (auto potential_neighbour : boids)
+    for (int j = 0;j < no_of_boids; j++)
     {
       // Check boid if not itself & Check other boid is in the neighbourhood
-      if(boid != potential_neighbour && are_neighbours(boid, potential_neighbour))
+      if(boids[i] != boids[j] && are_neighbours(boids[i], boids[j]))
       {
            // Add up all neighbours positions.
-           centre_position += potential_neighbour.position;
+           centre_position += boids[j].position;
           // Keep track of number of neighbours.
            neighbours +=1;
       }
     }
     if (neighbours ==0){
-      cohere_velocity.push_back(glm::vec3(0.0f,0.0f,0.0f));
+      cohere_velocities[i]= glm::vec3(0.0f,0.0f,0.0f);
     }
     else
     {
     // Averaging to find centre position.
     centre_position /= neighbours;
     // Get direction from current position to centre position.
-    direction_vector = centre_position - boid.position;
+    direction_vector = centre_position - boids[i].position;
     // Normalise
   //direction_vector = normalise_vector(direction_vector);
     // Add weighting
@@ -122,34 +116,30 @@ std::vector<glm::vec3> Boid_control::cohere_boids()
     // Normalise
   //direction_vector = normalise_vector(direction_vector);
     // Add to velocity list.
-    cohere_velocity.push_back(direction_vector);
+      cohere_velocities[i] = direction_vector;
     }
   }
-  return cohere_velocity;
 }
 
-std::vector<glm::vec3> Boid_control::seperate_boids()
+void Boid_control::seperate_boids()
 {
-  // List for seperation velocity for each boid
-  std::vector<glm::vec3> seperation_velocity;
   // For each boid
-  for (auto boid : boids)
+  for (int i = 0;i < no_of_boids; i++)
   {
     // The direction vector for the boid
     glm::vec3 direction_vector;
-    for (auto potential_neighbour : boids)
+    for (int j = 0;j < no_of_boids; j++)
     {
       // Check boid is not itself & Check other boid is in the neighbourhood
-      if (boid != potential_neighbour && are_neighbours(boid, potential_neighbour))
+      if (boids[i] != boids[j] && are_neighbours(boids[i], boids[j]))
       {
-         direction_vector = direction_vector - (boid.position - potential_neighbour.position);
+         direction_vector = direction_vector - (boids[i].position - boids[j].position);
       }
     }
     direction_vector *= K_SEPERATE;
   //direction_vector = normalise_vector(direction_vector);
-    seperation_velocity.push_back(direction_vector);
+    seperate_velocities[i] = direction_vector;
    }
-   return seperation_velocity;
 }
 
 //*****************************************************************************
@@ -190,6 +180,6 @@ void Boid_control::generate_boids()
       -2 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (4))),
       -2  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (4))),
       -2  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (4))));
-		boids.push_back(new_ball);
+		boids[i] = new_ball;
 	}
 }
