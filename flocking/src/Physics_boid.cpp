@@ -80,11 +80,11 @@ void Physics_boid::check_out_of_bounds()
 	//if out of bounds come back round slowly.
 	if (position.z < Z_MIN)
 	{
-		velocity.z =  -velocity.z * 0.5; //position.z = Z_MAX - BOUNDARY_BUFFER;
+		velocity.z =  -velocity.z; //position.z = Z_MAX - BOUNDARY_BUFFER;
 	}
 	if (position.z > Z_MAX)
 	{
-		velocity.z = -velocity.z * 0.5; //Z_MIN + BOUNDARY_BUFFER;
+		velocity.z = -velocity.z; //Z_MIN + BOUNDARY_BUFFER;
 	}
 
 }

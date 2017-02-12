@@ -1,7 +1,8 @@
-#define LOCAL_LEVEL 2
+#define LOCAL_LEVEL 6
 #define K_ALIGN 0.3
 #define K_COHERE 0.3
 #define K_SEPERATE 0.3
+#define TOO_CLOSE 1
 
 #include <algorithm>    // std::max
 #include <iostream>
@@ -29,9 +30,9 @@ void Boid_control::move_boids(float time_diff){
   // For every boid
   for (int i = 0; i < no_of_boids; i++)
   {
-    boids[i].velocity = align_velocities[i];
+  //  boids[i].velocity = align_velocities[i];
     boids[i].velocity = cohere_velocities[i];
-    boids[i].velocity = seperate_velocities[i];
+    boids[i].velocity += seperate_velocities[i];
 
     // Move ball: it checks top speed and if out of bounds
     boids[i].move_ball(time_diff);
@@ -51,7 +52,7 @@ void Boid_control::align_boids()
     for (int j = 0; j < no_of_boids; j++)
     {
       // Check boid if not itself &  Check other boid is in the neighbourhood
-      if(boids[i] != boids[j] && are_neighbours(boids[i], boids[j]))
+      if(boids[i] != boids[j] && distance(boids[i], boids[j]) < LOCAL_LEVEL)
       {
          // Total neighbours velocities
          alignment += boids[j].velocity;
@@ -72,7 +73,7 @@ void Boid_control::align_boids()
     // Add Weighting
     alignment = alignment * K_ALIGN;
     // Normalise
-   alignment = normalise_vector(alignment);
+    alignment = normalise_vector(alignment);
     // Add to list.
     align_velocities[i] = alignment;
     }
@@ -92,12 +93,16 @@ void Boid_control::cohere_boids()
     for (int j = 0;j < no_of_boids; j++)
     {
       // Check boid if not itself & Check other boid is in the neighbourhood
-      if(boids[i] != boids[j] && are_neighbours(boids[i], boids[j]))
+      if(boids[i] != boids[j] && distance(boids[i], boids[j]) < LOCAL_LEVEL)
       {
-           // Add up all neighbours positions.
-           centre_position += boids[j].position;
-          // Keep track of number of neighbours.
-           neighbours +=1;
+        //Check boids are not already too close.
+        if( distance(boids[i],boids[j]) > TOO_CLOSE)
+        {
+             // Add up all neighbours positions.
+             centre_position += boids[j].position;
+            // Keep track of number of neighbours.
+             neighbours +=1;
+        }
       }
     }
     if (neighbours ==0){
@@ -116,7 +121,7 @@ void Boid_control::cohere_boids()
     // Normalise
     direction_vector = normalise_vector(direction_vector);
     // Add to velocity list.
-      cohere_velocities[i] = direction_vector;
+    cohere_velocities[i] = direction_vector;
     }
   }
 }
@@ -131,7 +136,7 @@ void Boid_control::seperate_boids()
     for (int j = 0;j < no_of_boids; j++)
     {
       // Check boid is not itself & Check other boid is in the neighbourhood
-      if (boids[i] != boids[j] && are_neighbours(boids[i], boids[j]))
+      if (boids[i] != boids[j] && distance(boids[i], boids[j]) < LOCAL_LEVEL)
       {
          direction_vector = direction_vector + (boids[i].position - boids[j].position);
       }
@@ -148,6 +153,16 @@ glm::vec3 Boid_control::normalise_vector(glm::vec3 vector)
 {
   vector /= sqrt(pow(vector.x,2) + pow(vector.y,2) + pow(vector.z,2));
   return vector;
+}
+
+float Boid_control::distance(Physics_boid boid_1, Physics_boid boid_2)
+{
+  auto diff_x = abs(boid_1.position.x - boid_2.position.x);
+  auto diff_y = abs(boid_1.position.y - boid_2.position.y);
+  auto diff_z = abs(boid_1.position.z - boid_2.position.z);
+
+  float distance = sqrt(pow(diff_x,2) + pow(diff_y,2) +pow(diff_z,2));
+  return distance;
 }
 
 bool Boid_control::are_neighbours(Physics_boid boid_1, Physics_boid boid_2)

@@ -19,6 +19,7 @@ public:
 	void cohere_boids();
 	void seperate_boids();
 	bool are_neighbours(Physics_boid boid_1, Physics_boid boid_2);
+	float distance(Physics_boid boid_1, Physics_boid boid_2);
 	glm::vec3 normalise_vector(glm::vec3 vector);
 
 	// Member variables
