@@ -1,8 +1,9 @@
-#define LOCAL_LEVEL 6
+#define LOCAL_LEVEL 5
 #define K_ALIGN 0.3
-#define K_COHERE 0.3
-#define K_SEPERATE 0.3
-#define TOO_CLOSE 1
+#define K_COHERE 0.1
+#define K_SEPERATE 0.03
+#define K_WANDER 0.01
+#define TOO_CLOSE 3
 
 #include <algorithm>    // std::max
 #include <iostream>
@@ -26,13 +27,16 @@ void Boid_control::move_boids(float time_diff){
   align_boids();
   seperate_boids();
   cohere_boids();
+  wander_boids();
 
   // For every boid
   for (int i = 0; i < no_of_boids; i++)
   {
-  //  boids[i].velocity = align_velocities[i];
-    boids[i].velocity = cohere_velocities[i];
+    // Apply calculated velocities
+    boids[i].velocity = align_velocities[i];
     boids[i].velocity += seperate_velocities[i];
+    boids[i].velocity += cohere_velocities[i];
+    //boids[i].velocity += wander_velocities[i];
 
     // Move ball: it checks top speed and if out of bounds
     boids[i].move_ball(time_diff);
@@ -73,7 +77,7 @@ void Boid_control::align_boids()
     // Add Weighting
     alignment = alignment * K_ALIGN;
     // Normalise
-    alignment = normalise_vector(alignment);
+  //  alignment = normalise_vector(alignment);
     // Add to list.
     align_velocities[i] = alignment;
     }
@@ -119,7 +123,7 @@ void Boid_control::cohere_boids()
     // Add weighting
     direction_vector *= K_COHERE;
     // Normalise
-    direction_vector = normalise_vector(direction_vector);
+    //direction_vector = normalise_vector(direction_vector);
     // Add to velocity list.
     cohere_velocities[i] = direction_vector;
     }
@@ -138,16 +142,28 @@ void Boid_control::seperate_boids()
       // Check boid is not itself & Check other boid is in the neighbourhood
       if (boids[i] != boids[j] && distance(boids[i], boids[j]) < LOCAL_LEVEL)
       {
-         direction_vector = direction_vector + (boids[i].position - boids[j].position);
+        //  direction_vector = direction_vector + (boids[i].position - boids[j].position);
+        direction_vector = direction_vector + (boids[j].position - boids[i].position);
       }
     }
+    direction_vector = direction_vector * -1;
     direction_vector = normalise_vector(direction_vector);
     direction_vector *= K_SEPERATE;
-    direction_vector = normalise_vector(direction_vector);
+  //  direction_vector = normalise_vector(direction_vector);
     seperate_velocities[i] = direction_vector;
    }
 }
-
+void Boid_control::wander_boids()
+{
+  for (int i = 0;i < no_of_boids; i++)
+  {
+    //Generate random velocity.
+    auto direction_vector = glm::vec3(rand() % 6, rand() % 6, rand() % 6);
+    direction_vector = normalise_vector(direction_vector);
+    direction_vector *= K_WANDER;
+    wander_velocities[i] = direction_vector;
+  }
+}
 //*****************************************************************************
 glm::vec3 Boid_control::normalise_vector(glm::vec3 vector)
 {

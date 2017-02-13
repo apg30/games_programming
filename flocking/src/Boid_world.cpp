@@ -93,17 +93,19 @@ void update(double currentTime) {
 
 	// calculate Spheres' movement
 	glm::mat4 mv_matrix_spheres;
-	int i=0;
-	for (Physics_boid n : control.boids)
+//	int i=0;
+//	for (Physics_boid n : control.boids)
+	for(int i =0; i < no_of_boids; i++)
 	{
-		mv_matrix_spheres = glm::translate(n.position) *
+		mv_matrix_spheres = glm::translate(control.boids[i].position) *
 								//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
 								//glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
 								glm::mat4(1.0f) *
-								glm::scale(glm::vec3(n.radius, n.radius, n.radius));
+								glm::scale(glm::vec3(control.boids[i].radius, control.boids[i].radius, control.boids[i].radius));
 			mySpheres[i].mv_matrix = mv_matrix_spheres;
 			mySpheres[i].proj_matrix = myGraphics.proj_matrix;
-			i++;
+			std::cout << i << std::endl;
+			//i++;
 	}
 
 	t += 0.01f; // increment movement variable

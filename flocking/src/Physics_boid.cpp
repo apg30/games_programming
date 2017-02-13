@@ -15,7 +15,7 @@ using namespace std;
 #define Y_MAX X_MAX
 #define Z_MIN -9.0f
 #define Z_MAX -3.0f
-#define BOUNDARY_BUFFER 0.05f
+#define BOUNDARY_BUFFER 0.5f
 #define MAX_SPEED 0.5
 
 Physics_boid::Physics_boid() {
@@ -77,14 +77,13 @@ void Physics_boid::check_out_of_bounds()
 		position.y = Y_MIN + BOUNDARY_BUFFER;
 	}
 
-	//if out of bounds come back round slowly.
 	if (position.z < Z_MIN)
 	{
-		velocity.z =  -velocity.z; //position.z = Z_MAX - BOUNDARY_BUFFER;
+		position.z = Z_MAX - BOUNDARY_BUFFER; //		velocity.z = -velocity.z; //position.z = Z_MAX - BOUNDARY_BUFFER;
 	}
 	if (position.z > Z_MAX)
 	{
-		velocity.z = -velocity.z; //Z_MIN + BOUNDARY_BUFFER;
+		position.z = Z_MIN + BOUNDARY_BUFFER; //velocity.z = -velocity.z;
 	}
 
 }
