@@ -17,6 +17,8 @@ Maze::~Maze(){};
 
 void Maze::generate_maze()
 {
+  int no_of_obstacles = 0;
+
   for (int i =0; i < ROWS; i++)
   {
     for (int j=0; j < COLUMNS; j++)
@@ -25,6 +27,7 @@ void Maze::generate_maze()
       {
         if((rand() % 100) > 80){
         cells[i][j].obstacle = true;
+        no_of_obstacles++;
         }else
         {
           cells[i][j].obstacle = false;
@@ -32,6 +35,11 @@ void Maze::generate_maze()
       }
     }
   }
+  if (no_of_obstacles < 80)
+  {
+    generate_maze();
+  }
+  std::cout << "There are " << no_of_obstacles << " obstacles in this 20x20 grid"<<std::endl;
 }
 
 void Maze::print_maze()
@@ -65,9 +73,9 @@ void Maze::select_positions()
   int start_row;
   int start_column;
   std::cout << "Select the start position" << std::endl;
-  std::cout << "x axis" << std::endl;
+  std::cout << "Please select the x axis" << std::endl;
   std::cin >> start_column;
-  std::cout << "y axis" << std::endl;
+  std::cout << "Please select the y axis" << std::endl;
   std::cin >> start_row;
   reset_properties(cells[start_row -1][start_column -1]);
   cells[start_row -1][start_column -1].start = true;
@@ -77,12 +85,13 @@ void Maze::select_positions()
   int end_row;
   int end_column;
   std::cout << "Select the end position" << std::endl;
-  std::cout << "x axis" << std::endl;
+  std::cout << "Please select the x axis" << std::endl;
   std::cin >> end_column;
-  std::cout << "y axis" << std::endl;
+  std::cout << "Please select the y axis" << std::endl;
   std::cin >> end_row;
   reset_properties(cells[end_row -1][end_column -1]);
   cells[end_row -1][end_column -1].end = true;
+  std::cout << std::endl;
 }
 
 void Maze::reset_properties(Cell cell_to_reset)
