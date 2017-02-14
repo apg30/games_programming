@@ -15,16 +15,37 @@ Path_planning::~Path_planning(void)
 void Path_planning::setup()
 {
 
-  maze.generate_maze();
-  maze.print_maze();
+  int obstacles[20][20] = {
+      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,1,0,1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
+      {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,1,0,0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0},
+      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1},
+      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  };
+
+//  maze.generate_maze(obstacles);
+  maze.print_maze(obstacles, std::make_pair(-1,-1), std::make_pair(-1,-1));
   std::pair<int,int> start_position = maze.select_start_position();
   std::pair<int,int> end_position = maze.select_end_position();
-  maze.print_maze();
+  maze.print_maze(obstacles,start_position,end_position);
 
-  std::cout <<start_position.first <<std::endl;
-  std::cout <<start_position.second <<std::endl;
-  std::cout <<end_position.first <<std::endl;
-  std::cout <<end_position.second <<std::endl;
+  std::cout << "start [" << start_position.first << "," << start_position.second <<"]" << std::endl;
+  std::cout << "end [" << end_position.first << "," << end_position.second <<"]" << std::endl;
+
 
   find_path(start_position.first, start_position.second,end_position.first,end_position.second);
 
@@ -34,17 +55,17 @@ void Path_planning::find_path(int start_x, int start_y, int end_x, int end_y)
 {
   if(!initialized_start_to_end)
   {
-    for (int i = 0; i < open_list.size(); i++)
+    for (std::size_t i = 0; i < open_list.size(); i++)
     {
       delete open_list[i];
     }
     open_list.clear();
-    for (int i =0; visited_list.size(); i++)
+    for (std::size_t i =0; visited_list.size(); i++)
     {
       delete visited_list[i];
     }
     visited_list.clear();
-    for(int i=0; path_to_goal.size();i++)
+    for(std::size_t i=0; path_to_goal.size();i++)
     {
       delete path_to_goal[i];
     }
@@ -107,7 +128,7 @@ void Path_planning::continue_path()
     {
         // Get shortest path from goal
         path_to_goal.push_back(new glm::vec3(get_path->x_coord, get_path->y_coord, 0));
-        std::cout <<  "coords [" << get_path->x_coord <<  "," << get_path->y_coord <<  "]" << std::endl;
+        std::cout <<  "coords [" << get_path->y_coord <<  "," << get_path->x_coord <<  "]" << std::endl;
     }
 
     goal_found = true;
@@ -136,16 +157,14 @@ void Path_planning::continue_path()
 
 
     // Remove current cell from the open list now that it has been checked.
-    for( int i=0; i<open_list.size(); i++)
+    for(std::size_t i=0; i<open_list.size(); i++)
     {
       if(current_cell->x_coord == open_list[i]->x_coord && current_cell->y_coord == open_list[i]->y_coord)
       {
         open_list.erase(open_list.begin() + i);
       }
     }
-
   }
-
 }
 
 // Get the next cell to evaluate.
@@ -156,7 +175,7 @@ Cell * Path_planning::get_next_cell()
   int cell_index = -1;
   Cell* next_cell = NULL;
 
-  for(int i = 0; i < open_list.size(); i++)
+  for(std::size_t i = 0; i < open_list.size(); i++)
   {
     if(open_list[i]->GetF() < bestF)
     {
@@ -175,20 +194,36 @@ Cell * Path_planning::get_next_cell()
 
 void Path_planning::path_opened(int x, int y, float new_cost, Cell * parent)
 {
-  // Check if cell has obstacle in it
-  if(maze.cells[x][y].obstacle)
+  // Make sure it does not search beyond the maze parameters
+  if( x > 19 || y > 19 || x < 0 || y <0)
   {
     return;
   }
 
+  // Check if cell has obstacle in it
+  if(obstacles[x][y] == 1)
+  {
+      return;
+  }
+  // for(std::size_t i= 0; i < obstacle_list.size(); i++)
+  // {
+  //   if(x == obstacle_list[i].first && y == obstacle_list[i].second)
+  //   {
+  //   //  std::cout << x + 1<<":"<< y + 1<<std::endl;
+  //
+  //   }
+  // }
+
   // Check if the node has already been visited
-  for (int i=0; i< visited_list.size();i++)
+  for (std::size_t i=0; i< visited_list.size();i++)
   {
     if(x == visited_list[i]->x_coord && y == visited_list[i]->y_coord)
     {
+    //  std::cout << "[" << visited_list[i]->x_coord << "," <<visited_list[i]->y_coord << "]" << std::endl;
       return;
     }
   }
+
   // If the cell has not already been visited
   // set it to temp variable new_child.
   // calculate its cost and heuristic.
@@ -197,7 +232,7 @@ void Path_planning::path_opened(int x, int y, float new_cost, Cell * parent)
   new_child->h = parent->man_distance(goal_cell);
 
   // Look through open list
-  for( int i = 0; i < open_list.size(); i++)
+  for(std::size_t i = 0; i < open_list.size(); i++)
   {
     // Find cell in open list
     if(x == open_list[i]->x_coord && y == open_list[i]->y_coord)
@@ -223,29 +258,3 @@ void Path_planning::path_opened(int x, int y, float new_cost, Cell * parent)
   }
   open_list.push_back(new_child);
 }
-
-/*
-glm::vec3 Path_planning::next_path_pos()
-{
-    int index =1;
-
-    glm::vec3 pos = glm::vec3(0.0f,0.0f,0.0f);
-    float radius = 1;
-
-    glm::vec3 next_pos;
-    next_pos.x = path_to_goal[path_to_goal.size() - index]->x;
-    next_pos.y = path_to_goal[path_to_goal.size() - index]->y;
-
-    glm::vec3 distance = next_pos - pos;
-
-    if (index < path_to_goal.size())
-    {
-      if(distance.Length() < radius)
-      {
-        path_to_goal.erase(path_to_goal.end() - index);
-      }
-    }
-
-    return next_pos;
-}
-*/

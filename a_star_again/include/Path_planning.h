@@ -34,6 +34,7 @@ private:
   Cell *goal_cell;
   std::vector<Cell*> open_list;
   std::vector<Cell*> visited_list;
+  int obstacles[20][20];
   std::vector<glm::vec3*> path_to_goal;
 
 };

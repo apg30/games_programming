@@ -6,6 +6,7 @@
 
 #include "Cell.h"
 #include <utility>
+#include <vector>
 
 class Maze{
 public:
@@ -13,8 +14,8 @@ public:
   // Functions
   Maze();
   ~Maze();
-  void generate_maze();
-  void print_maze();
+//  void generate_maze(int obstacles[20][20]);
+  void print_maze(int obstacles[20][20],std::pair<int,int> start_position,std::pair<int,int> end_position);
   std::pair<int,int> select_start_position();
   std::pair<int,int> select_end_position();
   void reset_properties(Cell cell_to_reset);
