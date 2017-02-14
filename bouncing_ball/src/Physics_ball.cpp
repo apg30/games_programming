@@ -6,10 +6,10 @@
 #include <iostream>
 
 Physics_ball::Physics_ball() {
-	position = glm::vec3(0.0f, 0.0f, -6.0f);
-	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-	acceleration = glm::vec3(0.0f, -9.8f, 0.0f);
-	friction = glm::vec3(0.9f, 1.0f, 0.9f);
+	position = vec3(0.0f, 0.0f, -6.0f);
+	velocity = vec3(0.0f, 0.0f, 0.0f);
+	acceleration = vec3(0.0f, -9.8f, 0.0f);
+	friction = vec3(0.9f, 1.0f, 0.9f);
 	lifetime = 700;
 	radius = 1;
 };
@@ -68,7 +68,7 @@ bool Physics_ball::is_alive()
 	}
 }
 
-bool Physics_ball::has_hit_ground(glm::vec3 position)
+bool Physics_ball::has_hit_ground(vec3 position)
 {
 	if (position.y <= GROUND)
 	{

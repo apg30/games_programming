@@ -36,7 +36,7 @@ void Boid_control::move_boids(float time_diff){
     boids[i].velocity = align_velocities[i];
     boids[i].velocity += seperate_velocities[i];
     boids[i].velocity += cohere_velocities[i];
-    //boids[i].velocity += wander_velocities[i];
+    boids[i].velocity += wander_velocities[i];
 
     // Move ball: it checks top speed and if out of bounds
     boids[i].move_ball(time_diff);

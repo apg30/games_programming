@@ -26,7 +26,7 @@ void Ball_control::explode()
   auto position = main_ball.position;
   if (!main_ball.is_alive())
   {
-    position = glm::vec3(
+    position = vec3(
                -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))),
                -3  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))),
                -9  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6))));
@@ -39,7 +39,7 @@ void Ball_control::explode()
 		new_ball.radius = 0.02f;
 		new_ball.position = position;
 		new_ball.velocity =
-      glm::vec3(
+      vec3(
       -7 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (16))),
       -7  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (25))),
       -7  + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (16))));

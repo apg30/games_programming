@@ -183,7 +183,8 @@ void update(double currentTime) {
 	int i=0;
 	for (Physics_ball n : control.balls)
 	{
-		mv_matrix_spheres = glm::translate(n.position) *
+		auto position = n.position.toVec3();
+		mv_matrix_spheres = glm::translate(position) *
 								//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
 								//glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
 								glm::mat4(1.0f) *
@@ -194,7 +195,8 @@ void update(double currentTime) {
 	}
 
 	// calculate  main sphere's movement
-	glm::mat4 main_mv_matrix_sphere =	glm::translate(control.main_ball.position) *
+	auto main_position = control.main_ball.position.toVec3();
+	glm::mat4 main_mv_matrix_sphere =	glm::translate(main_position) *
 										//glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
 										//glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
 										glm::mat4(1.0f);
