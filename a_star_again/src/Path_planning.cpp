@@ -1,6 +1,7 @@
 #include "Path_planning.h"
 #include <iostream>
 
+
 Path_planning::Path_planning(void)
 {
   initialized_start_to_end = false;
@@ -9,6 +10,24 @@ Path_planning::Path_planning(void)
 
 Path_planning::~Path_planning(void)
 {
+}
+
+void Path_planning::setup()
+{
+
+  maze.generate_maze();
+  maze.print_maze();
+  std::pair<int,int> start_position = maze.select_start_position();
+  std::pair<int,int> end_position = maze.select_end_position();
+  maze.print_maze();
+
+  std::cout <<start_position.first <<std::endl;
+  std::cout <<start_position.second <<std::endl;
+  std::cout <<end_position.first <<std::endl;
+  std::cout <<end_position.second <<std::endl;
+
+  find_path(start_position.first, start_position.second,end_position.first,end_position.second);
+
 }
 
 void Path_planning::find_path(int start_x, int start_y, int end_x, int end_y)
@@ -157,7 +176,7 @@ Cell * Path_planning::get_next_cell()
 void Path_planning::path_opened(int x, int y, float new_cost, Cell * parent)
 {
   // Check if cell has obstacle in it
-  if()
+  if(maze.cells[x][y].obstacle)
   {
     return;
   }

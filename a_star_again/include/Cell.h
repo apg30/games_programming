@@ -1,6 +1,8 @@
 #ifndef CELL_H
 #define CELL_H
 
+#include <stdlib.h>
+
 struct Cell{
 public:
     // Variables
@@ -10,6 +12,8 @@ public:
     Cell *parent;
     float g;
     float h;
+
+    bool obstacle= false;
 
     Cell() : parent(0){}
     Cell(int x, int y, Cell *_parent =0) : x_coord(x), y_coord(y), parent(_parent),g(0), h(0) {};

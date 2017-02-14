@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include "Maze.h"
 
 #include "Cell.h"
 
@@ -12,6 +13,8 @@ public:
   Path_planning(void);
   ~Path_planning(void);
 
+   Maze maze;
+   void setup();
    void find_path(int start_x, int start_y, int end_x, int end_y);
    glm::vec3 next_path_pos();
    void clear_open_list(){ open_list.clear();}

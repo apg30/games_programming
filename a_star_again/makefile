@@ -1,4 +1,4 @@
-SRCS= Search.cpp Path_planning.cpp
+SRCS= Maze.cpp Search.cpp Path_planning.cpp
 SRC_DIR= $(addprefix src/,$(SRCS))
 LFLAGS=-lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
 
