@@ -6,6 +6,7 @@ Path_planning::Path_planning(void)
 {
   initialized_start_to_end = false;
   goal_found = false;
+
 }
 
 Path_planning::~Path_planning(void)
@@ -15,27 +16,27 @@ Path_planning::~Path_planning(void)
 void Path_planning::setup()
 {
 
-  int obstacles[20][20] = {
-      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,1,0,1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-      {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,1,0,0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0},
-      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1},
-      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  };
+  // int obstacles[20][20] = {
+  //     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,1,0,1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
+  //     {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,1,0,0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0},
+  //     {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1},
+  //     {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  //     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  };
 
 //  maze.generate_maze(obstacles);
   maze.print_maze(obstacles, std::make_pair(-1,-1), std::make_pair(-1,-1));
@@ -53,6 +54,7 @@ void Path_planning::setup()
 
 void Path_planning::find_path(int start_x, int start_y, int end_x, int end_y)
 {
+
   if(!initialized_start_to_end)
   {
     for (std::size_t i = 0; i < open_list.size(); i++)
@@ -65,11 +67,7 @@ void Path_planning::find_path(int start_x, int start_y, int end_x, int end_y)
       delete visited_list[i];
     }
     visited_list.clear();
-    for(std::size_t i=0; path_to_goal.size();i++)
-    {
-      delete path_to_goal[i];
-    }
-    path_to_goal.clear();
+
 
     //define start position
     Cell start;
@@ -81,10 +79,12 @@ void Path_planning::find_path(int start_x, int start_y, int end_x, int end_y)
     goal.x_coord = end_x;
     goal.y_coord = end_y;
 
+
     //Set the start and end position
     set_start_and_goal(start,goal);
     initialized_start_to_end = true;
   }
+
   while(initialized_start_to_end)
   {
     continue_path();
@@ -127,9 +127,10 @@ void Path_planning::continue_path()
     for(get_path = goal_cell; get_path != NULL;get_path = get_path->parent)
     {
         // Get shortest path from goal
-        path_to_goal.push_back(new glm::vec3(get_path->x_coord, get_path->y_coord, 0));
-        std::cout <<  "coords [" << get_path->y_coord <<  "," << get_path->x_coord <<  "]" << std::endl;
+        path_to_goal.push_back(std::make_pair(get_path->x_coord, get_path->y_coord));
+        std::cout <<  "coords [" << get_path->x_coord <<  "," << get_path->y_coord <<  "]" << std::endl;
     }
+    maze.print_maze(obstacles, std::make_pair(start_cell->x_coord, start_cell->y_coord), std::make_pair(goal_cell->x_coord, goal_cell->y_coord));
 
     goal_found = true;
     return;
@@ -146,15 +147,6 @@ void Path_planning::continue_path()
     path_opened(current_cell->x_coord, current_cell->y_coord + 1, current_cell->g +1, current_cell);
     //down cell
     path_opened(current_cell->x_coord, current_cell->y_coord -1, current_cell->g +1, current_cell);
-    //left-up cell
-    path_opened(current_cell->x_coord - 1, current_cell->y_coord +1, current_cell->g +1.41f, current_cell);
-    //right-up cell
-    path_opened(current_cell->x_coord + 1, current_cell->y_coord +1, current_cell->g +1.41f, current_cell);
-    //left-down cell
-    path_opened(current_cell->x_coord - 1, current_cell->y_coord -1, current_cell->g +1.41f, current_cell);
-    //right-up cell
-    path_opened(current_cell->x_coord - 1, current_cell->y_coord -1, current_cell->g +1.41f, current_cell);
-
 
     // Remove current cell from the open list now that it has been checked.
     for(std::size_t i=0; i<open_list.size(); i++)
