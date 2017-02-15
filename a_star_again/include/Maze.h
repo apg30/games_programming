@@ -15,7 +15,7 @@ public:
   Maze();
   ~Maze();
 //  void generate_maze(int obstacles[20][20]);
-  void print_maze(int obstacles[20][20],std::pair<int,int> start_position,std::pair<int,int> end_position);
+  void print_maze(int obstacles[20][20],int path[20][20], std::pair<int,int> start_position,std::pair<int,int> end_position);
   std::pair<int,int> select_start_position();
   std::pair<int,int> select_end_position();
   void reset_properties(Cell cell_to_reset);

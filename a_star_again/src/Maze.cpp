@@ -40,7 +40,7 @@ void Maze::generate_maze(int obstacles[20][20])
 }
 */
 
-void Maze::print_maze(int obstacles[20][20],std::pair<int,int> start_position,std::pair<int,int> end_position)
+void Maze::print_maze(int obstacles[20][20],int path[20][20], std::pair<int,int> start_position,std::pair<int,int> end_position)
 {
   //Setup writing
   for (int j=0; j < COLUMNS; j++)
@@ -72,6 +72,11 @@ void Maze::print_maze(int obstacles[20][20],std::pair<int,int> start_position,st
       }
       else
       {
+        if(path[i][j] ==1)
+        {
+          std::cout << " : ";
+        }
+        else
         std::cout << " . ";
       }
     }

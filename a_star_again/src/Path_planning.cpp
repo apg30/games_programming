@@ -39,10 +39,10 @@ void Path_planning::setup()
   //     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  };
 
 //  maze.generate_maze(obstacles);
-  maze.print_maze(obstacles, std::make_pair(-1,-1), std::make_pair(-1,-1));
+  maze.print_maze(obstacles,path, std::make_pair(-1,-1), std::make_pair(-1,-1));
   std::pair<int,int> start_position = maze.select_start_position();
   std::pair<int,int> end_position = maze.select_end_position();
-  maze.print_maze(obstacles,start_position,end_position);
+  maze.print_maze(obstacles,path,start_position,end_position);
 
   std::cout << "start [" << start_position.first << "," << start_position.second <<"]" << std::endl;
   std::cout << "end [" << end_position.first << "," << end_position.second <<"]" << std::endl;
@@ -128,9 +128,10 @@ void Path_planning::continue_path()
     {
         // Get shortest path from goal
         path_to_goal.push_back(std::make_pair(get_path->x_coord, get_path->y_coord));
+        path[get_path->x_coord][get_path->y_coord] = 1;
         std::cout <<  "coords [" << get_path->x_coord <<  "," << get_path->y_coord <<  "]" << std::endl;
     }
-    maze.print_maze(obstacles, std::make_pair(start_cell->x_coord, start_cell->y_coord), std::make_pair(goal_cell->x_coord, goal_cell->y_coord));
+    maze.print_maze(obstacles, path, std::make_pair(start_cell->x_coord, start_cell->y_coord), std::make_pair(goal_cell->x_coord, goal_cell->y_coord));
 
     goal_found = true;
     return;
