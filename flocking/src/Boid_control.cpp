@@ -1,9 +1,9 @@
-#define LOCAL_LEVEL 5
+#define LOCAL_LEVEL 1
 #define K_ALIGN 0.3
-#define K_COHERE 0.1
+#define K_COHERE 0.3
 #define K_SEPERATE 0.03
 #define K_WANDER 0.01
-#define TOO_CLOSE 3
+#define TOO_CLOSE 0.3
 
 #include <algorithm>    // std::max
 #include <iostream>
